@@ -25,8 +25,13 @@
   width: 200px;
   min-height: 400px;
 }
-.menu{
-  background-color: cornflowerblue
+.el-menu{
+  background-color: cornflowerblue;
+  height: 100%;
+}
+.el-aside{
+  overflow: hidden;
+  height: 100%;
 }
 </style>
 

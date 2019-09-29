@@ -5,43 +5,43 @@ export default [
     },
     {
         label: '天津',
-        value: 'tianjin',
+        value: '天津',
     },
     {
         label: '河北',
-        value: 'hebei'
+        value: '河北'
     },
     {
         label: '山西',
-        value: 'shanxi'
+        value: '山西'
     },
     {
         label: '内蒙古',
-        value: 'neimenggu'
+        value: '内蒙古'
     },
     {
         label: '吉林',
-        value: 'jilin'
+        value: '吉林'
     },
     {
         label: '辽宁',
-        value: 'liaoning'
+        value: '辽宁'
     },
     {
         label: '上海',
-        value: 'shanghai'
+        value: '上海'
     },
     {
         label: '山东',
-        value: 'shandong'
+        value: '山东'
     },
     {
         label: '江苏',
-        value: 'jiangsu'
+        value: '江苏'
     },
     {
         label: '安徽',
-        value: 'anhui'
+        value: '安徽'
     },
     {
         label: '浙江',
@@ -49,51 +49,51 @@ export default [
     },
     {
         label: '江西',
-        value: 'jiangxi'
+        value: '江西'
     },
     {
         label: '福建',
-        value: 'fujian'
+        value: '福建'
     },
     {
         label: '河南',
-        value: 'henan'
+        value: '河南'
     },
     {
         label: '湖北',
-        value: 'hubei'
+        value: '湖北'
     },
     {
         label: '湖南',
-        value: 'hunan'
+        value: '湖南'
     },
     {
         label: '海南',
-        value: 'hainan'
+        value: '海南'
     },
     {
         label: '广西',
-        value: 'guangxi'
+        value: '广西'
     },
     {
         label: '广东',
-        value: 'guangdong'
+        value: '广东'
     },
     {
         label: '重庆',
-        value: 'chongqing'
+        value: '重庆'
     },
     {
         label: '四川',
-        value: 'sichuan'
+        value: '四川'
     },
     {
         label: '贵州',
-        value: 'guizhou'
+        value: '贵州'
     },
     {
         label: '云南',
-        value: 'yunnan'
+        value: '云南'
     },
     {
         label: '西藏',
@@ -101,22 +101,22 @@ export default [
     },
     {
         label: '陕西',
-        value: 'sxi'
+        value: '陕西'
     },
     {
         label: '甘肃',
-        value: 'gansu'
+        value: '甘肃'
     },
     {
         label: '宁夏',
-        value: 'ningxia'
+        value: '宁夏'
     },
     {
         label: '青海',
-        value: 'qinghai'
+        value: '青海'
     },
     {
         label: '新疆',
-        value: 'xinjiang'
+        value: '新疆'
     },
 ]

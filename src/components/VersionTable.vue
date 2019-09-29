@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <el-main>
     <el-row>
       <el-col :span="6">
-        <el-input size="mini" placeholder="输入关键字搜索"/>
+        <el-input size="mini" placeholder="输入关键字搜索" />
       </el-col>
       <el-col :span="2">
         <el-button
@@ -13,7 +13,7 @@
         >Create</el-button>
       </el-col>
     </el-row>
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" style="width: 100%;height:100%;" max-height="88%">
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
@@ -59,7 +59,7 @@
           <el-input v-model="ruleForm.versionNumber"></el-input>
         </el-form-item>
         <el-form-item label="所属省份" prop="province">
-          <el-select v-model="ruleForm.province" placeholder="请选择活动区域" style="width:100%">
+          <el-select v-model="ruleForm.province" placeholder="请选择所属省份" style="width:100%">
             <el-option v-for="p in provinces" :label="p.label" :value="p.value" :key="p.value"></el-option>
           </el-select>
         </el-form-item>
@@ -102,7 +102,7 @@
               type="success"
               @click="submitUpload"
             >上传到服务器</el-button>-->
-             <span slot="tip" class="el-upload-tip">只能上传js文件，且不超过1MB</span>
+            <span slot="tip" class="el-upload-tip">只能上传js文件，且不超过1MB</span>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -114,7 +114,7 @@
         </template>
       </span>
     </el-dialog>
-  </div>
+  </el-main>
 </template>
 <script>
 import version from "../api/version.js";
@@ -129,7 +129,7 @@ export default {
       provinces: provinces,
       page: {
         currentPage: 1,
-        pageSize: 5,
+        pageSize:10, 
         total: 0
       },
       rules: {
@@ -158,12 +158,11 @@ export default {
   },
   methods: {
     // 上传脚本文件
-    upload(param){
+    upload(param) {
       // 获取文件
       let file = param.file;
       let formData = new formData();
       version.upload(formData);
-
     },
     // 分页查询
     findPage() {
@@ -179,7 +178,11 @@ export default {
           console.log(this.page);
         })
         .catch(err => {
-          console.log(err);
+          // console.log(err);
+          this.$message({
+            type: "error",
+            message: err.message
+          });
         });
     },
     // 分页
@@ -215,7 +218,9 @@ export default {
                 message: "更新成功！"
               });
             })
-            .catch(err => {});
+            .catch(err => {
+              console.log(err)
+            });
         }
       });
     },
@@ -238,9 +243,11 @@ export default {
                 console.log(result);
               }
             })
-            .catch(err => {});
+            .catch(err => {
+              console.log(err)
+            });
         } else {
-          console.log("error submit!!");
+          // console.log("error submit!!");
           return false;
         }
       });
@@ -262,7 +269,9 @@ export default {
         .then(result => {
           this.tableData = result.data;
         })
-        .catch(err => {});
+        .catch(err => {
+          console.log(err)
+        });
     },
     deleteDate(data) {
       // console.log(data.row);
@@ -275,7 +284,6 @@ export default {
           version
             .deleteVersion(data.row)
             .then(result => {
-              console.log(result);
               if (result.status == 200) {
                 // 弹出提示
                 this.$message({
@@ -287,7 +295,9 @@ export default {
                 this.findPage();
               }
             })
-            .catch(err => {});
+            .catch(err => {
+              console.log(err)
+            });
         })
         .catch(() => {
           // this.$message({
@@ -317,14 +327,14 @@ export default {
 .header {
   float: left;
 }
-.pagination {
+/* .pagination {
   text-align: left;
   margin-top: 20px;
-}
+} */
 .upload-demo {
   text-align: left;
 }
-.el-upload-tip{
+.el-upload-tip {
   margin-left: 2em;
 }
 </style>

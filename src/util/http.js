@@ -1,6 +1,7 @@
 // 引入axios
 import axios from 'axios';
 import store from '../store';
+import router from '../router';
 
 // 创建axios实例
 const httpService = axios.create({
@@ -53,6 +54,7 @@ httpService.interceptors.response.use(
                     break;
                 case 401:
                     error.message = '未授权，请重新登录';
+                    router.push('/login')
                     break;
                 case 403:
                     error.message = '拒绝访问';
