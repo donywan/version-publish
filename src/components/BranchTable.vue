@@ -19,18 +19,11 @@
     >
       <!-- 选择框 -->
       <!-- <el-table-column type="selection" width="55"></el-table-column> -->
-      <el-table-column prop="username" label="登录名称" sortable width="180"></el-table-column>
-      <el-table-column prop="chinesename" label="中文名称" sortable width="180"></el-table-column>
-      <el-table-column prop="email" label="邮箱地址" sortable width="220"></el-table-column>
-      <el-table-column prop="phone" label="手机号码" sortable width="150"></el-table-column>
+      <el-table-column prop="dcsid" label="DCSID" sortable width="280"></el-table-column>
+      <el-table-column prop="name" label="渠道名称" sortable width="180"></el-table-column>
       <el-table-column prop="province" label="所属省份" sortable width="150"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="data">
-          <el-link
-            type="primary"
-            @click="resetPassword(data)"
-            style="margin-right:20px;"
-          >Password reset?</el-link>
           <el-button size="mini" @click="openEdit(data)">Edit</el-button>
           <el-button size="mini" type="danger" @click="deleteData(data)">Delete</el-button>
         </template>
@@ -50,37 +43,27 @@
     <!-- </el-row> -->
     <!-- 添加用户弹出框 -->
     <el-dialog
-      title="用户管理"
+      title="渠道管理"
       width="40%"
       :close-on-click-modal="false"
       :show-close="false"
       :visible="dialogFormVisible"
     >
-      <el-form :model="userForm" :rules="rules" ref="userForm" label-width="100px" close>
-        <el-form-item label="登录名称" prop="username">
-          <el-input v-model="userForm.username" placeholder="请输入登录名称"></el-input>
+      <el-form :model="branch" :rules="rules" ref="branch" label-width="100px" close>
+        <el-form-item label="DCSID" prop="dcsid">
+          <el-input v-model="branch.dcsid" placeholder="请输入dcsid"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="登录密码" prop="password">
-          <el-input v-model="userForm.password" show-password></el-input>
-        </el-form-item>-->
-        <el-form-item label="中文名称" prop="chinesename">
-          <el-input v-model="userForm.chinesename" placeholder="请输入中文名称"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱地址" prop="email">
-          <el-input v-model="userForm.email" placeholder="请输入邮箱地址"></el-input>
-        </el-form-item>
-        <el-form-item label="手机号码" prop="phone">
-          <el-input v-model="userForm.phone" placeholder="请输入手机号码"></el-input>
+        <el-form-item label="渠道名称" prop="name">
+          <el-input v-model="branch.name" placeholder="请输入渠道名称"></el-input>
         </el-form-item>
         <el-form-item label="所属省份" prop="province">
-          <el-select v-model="userForm.province" placeholder="请选择所属省份" style="width:100%">
+          <el-select v-model="branch.province" placeholder="请选择所属省份" style="width:100%">
             <el-option v-for="p in provinces" :label="p.label" :value="p.value" :key="p.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <template>
-          <!-- <el-button type="primary" @click="updateVersion('userForm')">确定</el-button> -->
           <el-button type="primary" @click="submitForm('userForm')">确定</el-button>
           <el-button @click="closeForm('userForm')">取消</el-button>
         </template>
@@ -91,14 +74,14 @@
 
 <script>
 import provinces from "../data/provinces.js";
-import userService from "../api/user";
+import branchApi from "../api/branch.js";
 
 export default {
   data() {
     return {
       provinces: provinces,
       rules: {},
-      userForm: {},
+      branch: {},
       dialogFormVisible: false,
       tableData: [],
       // 页数
@@ -109,28 +92,21 @@ export default {
       },
       // 表单验证
       rules: {
-        username: [
+        dcsid: [
           {
             required: true,
-            message: "请选择日期",
+            message: "请输入dcsid",
             trigger: "change"
           }
         ],
-        chinesename: [
+        name: [
           {
             required: true,
-            message: "请选择时间",
+            message: "请输入渠道名称",
             trigger: "change"
           }
         ],
-        email: [
-          {
-            required: true,
-            message: "请填写邮箱",
-            trigger: "change"
-          }
-        ],
-        phone: [],
+
         province: [
           {
             required: true,
@@ -145,35 +121,9 @@ export default {
     this.findPage();
   },
   methods: {
-    openEdit(user) {
-      this.userForm = JSON.parse(JSON.stringify(user.row));
+    openEdit(data) {
+      this.branch = JSON.parse(JSON.stringify(data.row));
       this.dialogFormVisible = true;
-    },
-    resetPassword(data) {
-      this.$confirm("此操作将重置此用户登录密码,默认为[123456].", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          userService
-            .resetPassword(data.row)
-            .then(result => {
-              let response = result.data;
-              if (response.code) {
-                this.findPage();
-                // 弹出提示
-                this.$message({
-                  type: "success",
-                  message: response.message
-                });
-              }
-            })
-            .catch(err => {
-              console.log(err);
-            });
-        })
-        .catch(() => {});
     },
     deleteData(data) {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
@@ -182,7 +132,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          userService
+          branchApi
             .delete(data.row)
             .then(result => {
               let response = result.data;
@@ -205,15 +155,13 @@ export default {
       return row.address;
     },
     closeForm(formName) {
-      console.log(this.$refs);
-      this.$refs["userForm"].resetFields();
+      this.$refs.branch.resetFields();
       this.userForm = {};
-      // this.$refs[formName].clearValidate();
       this.dialogFormVisible = false;
     },
     // 查询分页
     findPage() {
-      userService.findPage(this.page).then(result => {
+      branchApi.findPage(this.page).then(result => {
         let response = result.data;
         console.log(response);
         if (response.code) {
@@ -233,12 +181,11 @@ export default {
     },
     // 提交表单
     submitForm(formName) {
-      console.log(this.userForm.id);
       // 表单创建
-      this.$refs["userForm"].validate(valid => {
+      this.$refs.branch.validate(valid => {
         if (valid) {
-          if (undefined == this.userForm.id || null == this.userForm.id) {
-            userService.register(this.userForm).then(result => {
+          if (undefined == this.branch.id || null == this.branch.id) {
+            branchApi.insert(this.branch).then(result => {
               let response = result.data;
               if (response.code) {
                 this.findPage();
@@ -255,7 +202,7 @@ export default {
               }
             });
           } else {
-            userService.update(this.userForm).then(result => {
+            branchApi.update(this.userForm).then(result => {
               let response = result.data;
               if (response.code) {
                 // let response = result.object;

@@ -30,8 +30,8 @@
             @click="resetPassword(data)"
             style="margin-right:20px;"
           >Password reset?</el-link>
-          <el-button size="mini" @click="openEdit(data)">Edit</el-button>
-          <el-button size="mini" type="danger" @click="deleteData(data)" icon="el-icon-delete">Delete</el-button>
+          <el-button size="mini" @click="openEdit(data)" icon="el-icon-edit"></el-button>
+          <el-button size="mini" type="danger" @click="deleteData(data)" icon="el-icon-delete"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -74,6 +74,12 @@
         <el-form-item label="所属省份" prop="province">
           <el-select v-model="userForm.province" placeholder="请选择所属省份" style="width:100%">
             <el-option v-for="p in provinces" :label="p.label" :value="p.value" :key="p.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="管理员" prop="province">
+          <el-select v-model="userForm.admin" placeholder="请选择是否管理员" style="width:100%">
+            <el-option label="否" value="0" key="0"></el-option>
+            <el-option label="是" value="1" key="1"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
