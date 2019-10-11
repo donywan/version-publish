@@ -184,6 +184,7 @@ export default {
       // 表单创建
       this.$refs.branch.validate(valid => {
         if (valid) {
+          // 创建
           if (undefined == this.branch.id || null == this.branch.id) {
             branchApi.insert(this.branch).then(result => {
               let response = result.data;
@@ -202,7 +203,8 @@ export default {
               }
             });
           } else {
-            branchApi.update(this.userForm).then(result => {
+            // 更新
+            branchApi.update(this.branch).then(result => {
               let response = result.data;
               if (response.code) {
                 // let response = result.object;

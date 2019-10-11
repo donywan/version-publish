@@ -3,6 +3,7 @@
     <el-row>
       <el-col :span="2">
         <el-button
+          icon="el-icon-circle-plus"
           size="mini"
           type="primary"
           @click="dialogFormVisible = true"
@@ -76,7 +77,7 @@
             <el-option v-for="p in provinces" :label="p.label" :value="p.value" :key="p.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="管理员" prop="province">
+        <el-form-item label="管理员" prop="admin">
           <el-select v-model="userForm.admin" placeholder="请选择是否管理员" style="width:100%">
             <el-option label="否" value="0" key="0"></el-option>
             <el-option label="是" value="1" key="1"></el-option>
@@ -135,7 +136,9 @@ export default {
             trigger: "change"
           }
         ],
-        phone: [],
+        admin: [
+          { required: true, message: "请选择是否管理员", trigger: "change" }
+        ],
         province: [
           {
             required: true,
@@ -147,8 +150,6 @@ export default {
     };
   },
   mounted() {
-
-    console.log(this.$store.state.user)
     this.findPage();
   },
   methods: {
@@ -212,7 +213,7 @@ export default {
       return row.address;
     },
     closeForm(formName) {
-      this.$refs["userForm"].resetFields();
+      this.$refs[formName].resetFields();
       this.userForm = {};
       // this.$refs[formName].clearValidate();
       this.dialogFormVisible = false;
@@ -238,9 +239,8 @@ export default {
     },
     // 提交表单
     submitForm(formName) {
-      console.log(this.userForm.id);
       // 表单创建
-      this.$refs["userForm"].validate(valid => {
+      this.$refs[formName].validate(valid => {
         if (valid) {
           if (undefined == this.userForm.id || null == this.userForm.id) {
             userService.register(this.userForm).then(result => {

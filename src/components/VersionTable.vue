@@ -1,9 +1,9 @@
 <template>
   <el-main>
     <el-row>
-      <el-col :span="6">
+      <!-- <el-col :span="6">
         <el-input size="mini" placeholder="输入关键字搜索" />
-      </el-col>
+      </el-col> -->
       <el-col :span="2">
         <el-button
           size="mini"
@@ -38,7 +38,7 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="page.currentPage"
+        :current-page="page.page+1"
         :page-size="page.pageSize"
         layout="prev, pager, next"
         :total="page.total"
@@ -48,7 +48,7 @@
     </el-row>
 
     <el-dialog
-      title="新增版本"
+      title="版本管理"
       width="40%"
       :close-on-click-modal="false"
       :show-close="false"
@@ -128,8 +128,8 @@ export default {
       ruleForm: {},
       provinces: provinces,
       page: {
-        currentPage: 1,
-        pageSize:10, 
+        page: 0,
+        size: 9,
         total: 0
       },
       rules: {
@@ -170,12 +170,14 @@ export default {
       version
         .findPage(this.page)
         .then(result => {
-          let data = result.data;
-          console.log(result.data);
-          this.page.currentPage = data.number + 1;
-          this.page.total = data.totalElements;
-          this.tableData = data.content;
-          console.log(this.page);
+          let response = result.data;
+          if (response.code) {
+            // this.page.currentPage = data.number + 1;
+            // this.page.total = data.totalElements;
+            // this.tableData = data.content;
+            this.tableData = response.object.content;
+            this.page.total = response.object.totalElements;
+          }
         })
         .catch(err => {
           // console.log(err);
@@ -190,13 +192,8 @@ export default {
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
-      if (this.page.currentPage != Number(`${val}`)) {
-        console.log(this.page.currentPage + "和" + `${val}`);
-      }
-      this.page.currentPage = Number(`${val}`);
+      this.page.page = Number(`${val}`) - 1;
       this.findPage();
-      console.log("${val}");
-      console.log(`当前页: ${val}`);
     },
     editOpen(props) {
       this.status = true;
@@ -219,7 +216,7 @@ export default {
               });
             })
             .catch(err => {
-              console.log(err)
+              console.log(err);
             });
         }
       });
@@ -244,7 +241,7 @@ export default {
               }
             })
             .catch(err => {
-              console.log(err)
+              console.log(err);
             });
         } else {
           // console.log("error submit!!");
@@ -270,7 +267,7 @@ export default {
           this.tableData = result.data;
         })
         .catch(err => {
-          console.log(err)
+          console.log(err);
         });
     },
     deleteDate(data) {
@@ -296,7 +293,7 @@ export default {
               }
             })
             .catch(err => {
-              console.log(err)
+              console.log(err);
             });
         })
         .catch(() => {

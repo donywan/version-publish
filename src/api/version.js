@@ -13,7 +13,7 @@ export default {
         return http.post('/version/updateVersion', data)
     },
     findPage(data){
-        return http.post('/version/findPage',data)
+        return http.get('/version/findPage',data)
     },
     upload(data){
         return http.fileUpload('/version/upload',data)
