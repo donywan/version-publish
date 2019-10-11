@@ -3,13 +3,13 @@
     <el-row>
       <!-- <el-col :span="6">
         <el-input size="mini" placeholder="输入关键字搜索" />
-      </el-col> -->
+      </el-col>-->
       <el-col :span="2">
         <el-button
           size="mini"
           type="primary"
           icon="el-icon-circle-plus"
-          @click="dialogFormVisible = true"
+          @click="editOpen(null)"
         >Create</el-button>
       </el-col>
     </el-row>
@@ -25,8 +25,10 @@
       </el-table-column>
       <el-table-column label="版本号" prop="versionNumber"></el-table-column>
       <el-table-column label="版本日期" prop="versionDate"></el-table-column>
-      <el-table-column label="所属省份" prop="province"></el-table-column>
-      <el-table-column label="操作用户" prop="user"></el-table-column>
+      <el-table-column label="省份" prop="branch.province"></el-table-column>
+      <el-table-column label="DCSID" prop="branch.dcsid"></el-table-column>
+      <el-table-column label="渠道" prop="branch.name"></el-table-column>
+      <el-table-column label="操作用户" prop="user.username"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="props">
           <el-button size="mini" @click="editOpen(props)">Edit</el-button>
@@ -38,7 +40,7 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="page.page+1"
+        :current-page="page.page + 1"
         :page-size="page.pageSize"
         layout="prev, pager, next"
         :total="page.total"
@@ -56,11 +58,24 @@
     >
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" close>
         <el-form-item label="版本名称" prop="versionNumber">
-          <el-input v-model="ruleForm.versionNumber"></el-input>
+          <el-input v-model="ruleForm.versionNumber" placeholder="请输入版本名称"></el-input>
         </el-form-item>
-        <el-form-item label="所属省份" prop="province">
+        <!-- <el-form-item label="所属省份" prop="province">
           <el-select v-model="ruleForm.province" placeholder="请选择所属省份" style="width:100%">
             <el-option v-for="p in provinces" :label="p.label" :value="p.value" :key="p.value"></el-option>
+          </el-select>
+        </el-form-item>-->
+        <el-form-item label="所属渠道" prop="branch">
+          <el-select
+            v-model="ruleForm.branch"
+            value-key="id"
+            placeholder="请选择所属渠道"
+            style="width:100%"
+          >
+            <el-option v-for="p in branchs" :label="p.name" :value="p" :key="p.id">
+              <span style="float: left">{{ p.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ p.province }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="版本日期" required>
@@ -119,6 +134,7 @@
 <script>
 import version from "../api/version.js";
 import provinces from "../data/provinces.js";
+import branchApi from "../api/branch";
 export default {
   data() {
     return {
@@ -127,6 +143,7 @@ export default {
       dialogFormVisible: false,
       ruleForm: {},
       provinces: provinces,
+      branchs: {},
       page: {
         page: 0,
         size: 9,
@@ -134,11 +151,11 @@ export default {
       },
       rules: {
         versionNumber: [
-          { required: true, message: "请输入版本号码", trigger: "blur" }
+          { required: true, message: "请输入版本号码", trigger: "change" }
           // { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
         ],
-        province: [
-          { required: true, message: "请选择所属省份", trigger: "change" }
+        branch: [
+          { required: true, message: "请选择所属渠道", trigger: "change" }
         ],
         versionDate: [
           {
@@ -196,9 +213,21 @@ export default {
       this.findPage();
     },
     editOpen(props) {
-      this.status = true;
-      // console.log(this.ruleForm.versionNumber);
-      this.ruleForm = JSON.parse(JSON.stringify(props.row));
+      if (props != null) {
+        this.status = true;
+        this.ruleForm = JSON.parse(JSON.stringify(props.row));
+      }
+      // 获取省份渠道
+      branchApi
+        .findByProvince()
+        .then(result => {
+          let response = result.data;
+          if (response.code) {
+            console.log(response);
+            this.branchs = response.object;
+          }
+        })
+        .catch(err => {});
       this.dialogFormVisible = true;
     },
     updateVersion(formName) {
@@ -335,4 +364,3 @@ export default {
   margin-left: 2em;
 }
 </style>
-

@@ -11,5 +11,9 @@ export default {
     },
     insert(data) {
         return http.post('/branch/insert', data)
+    },
+    findByProvince(data){
+        return http.get('/branch/findByProvince',data)
     }
+
 }

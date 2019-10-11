@@ -155,8 +155,8 @@ export default {
       return row.address;
     },
     closeForm(formName) {
+      this.branch = {};
       this.$refs.branch.resetFields();
-      this.userForm = {};
       this.dialogFormVisible = false;
     },
     // 查询分页
