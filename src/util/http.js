@@ -2,14 +2,18 @@
 import axios from 'axios';
 import store from '../store';
 import router from '../router';
+import axiosConfig from '../config/axios.config';
 
 // 创建axios实例
-const httpService = axios.create({
-    // url前缀-'https://some-domain.com/api/'
-    baseURL: 'http://127.0.0.1:8089/',//process.env.BASE_API, // 需自定义
-    // 请求超时时间
-    timeout: 5000 // 需自定义
-});
+const httpService = axios.create(
+    axiosConfig
+    //     {
+    //     // url前缀-'https://some-domain.com/api/'
+    //     baseURL: 'http://127.0.0.1:8089/',//process.env.BASE_API, // 需自定义
+    //     // 请求超时时间
+    //     timeout: 5000 // 需自定义
+    // }
+);
 
 // request拦截器
 httpService.interceptors.request.use(
@@ -22,7 +26,7 @@ httpService.interceptors.request.use(
             config.headers['token'] = token;
         }
         return config;
-    }, 
+    },
     error => {
         // 请求错误处理
         Promise.reject(error);
@@ -47,7 +51,7 @@ httpService.interceptors.response.use(
     },
     // 处理处理
     error => {
-         if (error && error.response) {
+        if (error && error.response) {
             switch (error.response.status) {
                 case 400:
                     error.message = '错误请求';
@@ -155,9 +159,35 @@ export function fileUpload(url, params = {}) {
         });
     });
 }
-
+/**
+ * 文件下载
+ * @param url 
+ * @param params 
+ */
+export function fileDownload(url, params = {}) {
+    return new Promise((resolve, reject) => {
+        httpService({
+            url: url,
+            method: 'GET',
+            data: params,
+            responseType: 'arraybuffer'
+        }).then(response => {
+            //  let fileName = response.headers["content-disposition"]
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', '');
+            document.body.appendChild(link);
+            link.click();
+            window.URL.revokeObjectURL(url);
+        }).catch(error => {
+            reject(error)
+        });
+    })
+}
 export default {
     get,
     post,
-    fileUpload
+    fileUpload,
+    fileDownload
 }

@@ -13,7 +13,7 @@
         >Create</el-button>
       </el-col>
     </el-row>
-    <el-table :data="tableData" style="width: 100%;height:100%;" max-height="88%">
+    <el-table :data="tableData" height="90%">
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
@@ -23,12 +23,19 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="版本号" prop="versionNumber"></el-table-column>
-      <el-table-column label="版本日期" prop="versionDate"></el-table-column>
-      <el-table-column label="省份" prop="branch.province"></el-table-column>
-      <el-table-column label="DCSID" prop="branch.dcsid"></el-table-column>
-      <el-table-column label="渠道" prop="branch.name"></el-table-column>
-      <el-table-column label="操作用户" prop="user.username"></el-table-column>
+      <el-table-column label="版本号" prop="versionNumber" sortable></el-table-column>
+      <el-table-column label="版本日期" prop="versionDate" sortable></el-table-column>
+      <el-table-column label="省份" prop="branch.province" sortable></el-table-column>
+      <el-table-column label="DCSID" prop="branch.dcsid" sortable></el-table-column>
+      <el-table-column label="渠道" prop="branch.name" sortable></el-table-column>
+      <el-table-column label="操作用户" prop="user.username" sortable></el-table-column>
+      <el-table-column label="下载">
+        <template slot-scope="prop">
+          <!-- <el-button type="text" @click="downloadJs(prop.row)">download</el-button> -->
+          <!-- download只支持同源下载 -->
+          <a :href="downloadJs(prop.row)" download>download</a>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="props">
           <el-button size="mini" @click="editOpen(props)">Edit</el-button>
@@ -100,15 +107,16 @@
         <el-form-item label="更新内容" prop="notes">
           <el-input type="textarea" v-model="ruleForm.notes"></el-input>
         </el-form-item>
-        <el-form-item label="脚本文件">
+        <el-form-item label="脚本文件" prop="jsFile">
           <el-upload
             class="upload-demo"
-            acion="https://jsonplaceholder.typicode.com/posts/"
+            action="string"
             ref="upload"
             :auto-upload="false"
             :multiple="false"
             :limit="1"
-            :http-request="upload"
+            :http-request="uploadFile"
+            accept=".js"
           >
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             <!-- <el-button
@@ -117,7 +125,7 @@
               type="success"
               @click="submitUpload"
             >上传到服务器</el-button>-->
-            <span slot="tip" class="el-upload-tip">只能上传js文件，且不超过1MB</span>
+            <span slot="tip" class="el-upload-tip">只能上传js文件</span>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -135,6 +143,8 @@
 import version from "../api/version.js";
 import provinces from "../data/provinces.js";
 import branchApi from "../api/branch";
+import httpConfig from "../config/axios.config";
+// import axios from "axios";
 export default {
   data() {
     return {
@@ -166,19 +176,29 @@ export default {
           }
         ],
         notes: [{ required: true, message: "请填写更新内容", trigger: "blur" }]
+        // jsFile:[{
+        //   required: true,
+        //   message: "请选择脚本文件",
+        // }]
       }
     };
   },
   mounted() {
-    // this.getData();
     this.findPage();
   },
   methods: {
-    // 上传脚本文件
-    upload(param) {
+    downloadJs(param) {
+      if (param.uploadDir != null) {
+        return httpConfig.baseURL + param.uploadDir;
+      }
+    },
+    // 自定义上传脚本文件
+    uploadFile(param) {
       // 获取文件
       let file = param.file;
-      let formData = new formData();
+      let formData = new FormData();
+      formData.append("file", file);
+      formData.append("version", JSON.stringify(this.ruleForm));
       version.upload(formData);
     },
     // 分页查询
@@ -223,7 +243,6 @@ export default {
         .then(result => {
           let response = result.data;
           if (response.code) {
-            console.log(response);
             this.branchs = response.object;
           }
         })
@@ -236,13 +255,14 @@ export default {
           version
             .updateVersion(this.ruleForm)
             .then(result => {
-              // this.getData();
-              this.findPage();
+              this.$refs.upload.submit();
+              
               this.closeForm(formName);
               this.$message({
                 type: "success",
                 message: "更新成功！"
               });
+              this.findPage();
             })
             .catch(err => {
               console.log(err);
@@ -256,24 +276,23 @@ export default {
           version
             .createVersion(this.ruleForm)
             .then(result => {
-              if (result.status == 200) {
+              let response = result.data;
+              if (response.code) {
+                // 重新给表单赋值
+                this.ruleForm = response.object;
                 // 创建成功之后上传脚本
-                // this.upload()
-                // this.getData();
+                this.$refs.upload.submit();
                 this.findPage();
-                this.closeForm(formName);
                 this.$message({
                   type: "success",
                   message: "创建成功！"
                 });
-                console.log(result);
               }
             })
             .catch(err => {
               console.log(err);
             });
         } else {
-          // console.log("error submit!!");
           return false;
         }
       });

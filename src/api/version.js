@@ -17,5 +17,8 @@ export default {
     },
     upload(data){
         return http.fileUpload('/version/upload',data)
+    },
+    downloadJs(path,data){
+        return http.get(path,data)
     }
 }
