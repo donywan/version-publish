@@ -35,7 +35,7 @@ export default {
   name: "AppLayout",
 
   components: {
-    "v-header": vHeader,
+    // "v-header": vHeader,
     "v-menu": vMenu
   },
   computed: {
@@ -68,8 +68,8 @@ export default {
   background-color: #333333;
   color: white;
   text-align: center;
-  line-height: 40px;
-  height: 40px !important;
+  line-height: 25px;
+  height: 30px !important;
 }
 .el-dropdown {
   color: white !important;
